@@ -45,7 +45,6 @@ void joy_cb(const sensor_msgs::Joy& vel_msg)
 	float joy_val = vel_msg.axes[1];
 	float duty_c = joy_val * 100;
 	
-    	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
     	__HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_1, duty_c*400);
 
   	val.data = duty_c;
