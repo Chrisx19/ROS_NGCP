@@ -2,7 +2,7 @@
 #include <ros.h>
 #include <std_msgs/Float64.h>
 #include <sensor_msgs/Joy.h>
-
+//                                   THIS ROS_CODE DONT NEED RPI NODE, SO YOU CAN RUN IT WITHOUT RPI SCRIPT TO RUN A MOTOR
 extern TIM_HandleTypeDef htim1;
 
 ros::NodeHandle nh;
