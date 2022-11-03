@@ -19,7 +19,7 @@ class Rpi(object):
         duty = joy_val_drive * 100
 
         self.vel.linear.x = duty
-        self.vel.angular.x = joy_val_turn
+        self.vel.angular.z = joy_val_turn
 
         self.cmd_vel_pub.publish(self.vel)
 
