@@ -54,6 +54,7 @@ if __name__ == "__main__":
     fps_avg_frame_count = 10
 
     while True:
+        counter += 1
         success, img = cap.read()
         result, objectInfo = getObjects(img, 0.50, 0.2, objects = ["person"])
 
