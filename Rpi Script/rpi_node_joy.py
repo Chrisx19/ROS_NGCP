@@ -17,6 +17,7 @@ class Rpi(object):
         joy_val_turn = joy_msg.axes[3]
 
         duty = joy_val_drive * 100
+        servo = joy_val_turn * 50
 
         self.vel.linear.x = duty
         self.vel.angular.z = joy_val_turn
