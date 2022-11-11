@@ -20,7 +20,7 @@ class Rpi(object):
         servo = joy_val_turn * 50
 
         self.vel.linear.x = duty
-        self.vel.angular.z = joy_val_turn
+        self.vel.angular.z = servo
 
         self.cmd_vel_pub.publish(self.vel)
 
