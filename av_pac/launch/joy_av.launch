@@ -1,0 +1,4 @@
+<launch>
+   <node name="joy_av" pkg="av_pac" type="joy_av.py" output="screen" />
+   <node name = "js" pkg = "joy" type = "joy_node" />
+</launch>
