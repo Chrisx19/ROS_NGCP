@@ -11,7 +11,6 @@ extern UART_HandleTypeDef huart3;
 extern DMA_HandleTypeDef hdma_usart3_rx;
 extern DMA_HandleTypeDef hdma_usart3_tx;
 
-
 ros::NodeHandle nh;
 
 void ugv_vel_cb(const geometry_msgs::Twist& ugv_vel_msg);
@@ -53,8 +52,9 @@ void ugv_vel_cb(const geometry_msgs::Twist& ugv_vel_msg)	//callback function fro
 {
 
 	int drive_duty_cycle = ugv_vel_msg.linear.x;//val: -100 <-> 100
+	int turn 			 = ugv_vel_msg.angular.z;
 
-	if (drive_duty_cycle > 0)					//Forward
+	if (drive_duty_cycle > 0 )					//Forward
 	{
 		__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_1, drive_duty_cycle*400);
 		__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_2, 0);
@@ -67,19 +67,49 @@ void ugv_vel_cb(const geometry_msgs::Twist& ugv_vel_msg)	//callback function fro
 
 		__HAL_TIM_SET_COMPARE(&htim4,TIM_CHANNEL_3, drive_duty_cycle*400);
 		__HAL_TIM_SET_COMPARE(&htim4,TIM_CHANNEL_4, 0);
+
+		if (turn > 0)
+		{
+			__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_1, (drive_duty_cycle * 0)*400); //l_front
+			__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_2, 0);
+
+			__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_3, (drive_duty_cycle - turn)*(400)); //r_front
+			__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_4, 0);
+
+			__HAL_TIM_SET_COMPARE(&htim4,TIM_CHANNEL_1, (drive_duty_cycle * 0)*400);  //l_back
+			__HAL_TIM_SET_COMPARE(&htim4,TIM_CHANNEL_2, 0);
+
+			__HAL_TIM_SET_COMPARE(&htim4,TIM_CHANNEL_3, (drive_duty_cycle - turn)*(400));		//r_back
+			__HAL_TIM_SET_COMPARE(&htim4,TIM_CHANNEL_4, 0);
+		}
+		else if (turn < 0)
+		{			//left
+			__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_1, (drive_duty_cycle - (turn*-1))*(400));
+			__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_2, 0);
+
+			__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_3, (drive_duty_cycle * 0)*400);
+			__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_4, 0);
+
+			__HAL_TIM_SET_COMPARE(&htim4,TIM_CHANNEL_1, (drive_duty_cycle - (turn*-1))*(400));
+			__HAL_TIM_SET_COMPARE(&htim4,TIM_CHANNEL_2, 0);
+
+			__HAL_TIM_SET_COMPARE(&htim4,TIM_CHANNEL_3, (drive_duty_cycle * 0)*400);
+			__HAL_TIM_SET_COMPARE(&htim4,TIM_CHANNEL_4, 0);
+		}
 	}
 	else										//Backward
 	{
 		__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_1, 0);
-		__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_2, (drive_duty_cycle) *400);
+		__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_2, (drive_duty_cycle * -1) *400);
 
 		__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_3, 0);
-		__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_4, (drive_duty_cycle) *400);
+		__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_4, (drive_duty_cycle * -1) *400);
 
 		__HAL_TIM_SET_COMPARE(&htim4,TIM_CHANNEL_1, 0);
-		__HAL_TIM_SET_COMPARE(&htim4,TIM_CHANNEL_2, (drive_duty_cycle) *400);
+		__HAL_TIM_SET_COMPARE(&htim4,TIM_CHANNEL_2, (drive_duty_cycle * -1) *400);
 
 		__HAL_TIM_SET_COMPARE(&htim4,TIM_CHANNEL_3, 0);
-		__HAL_TIM_SET_COMPARE(&htim4,TIM_CHANNEL_4, (drive_duty_cycle) *400);
+		__HAL_TIM_SET_COMPARE(&htim4,TIM_CHANNEL_4, (drive_duty_cycle * -1) *400);
 	}
 }
+
