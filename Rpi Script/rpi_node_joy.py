@@ -8,7 +8,7 @@ class Rpi(object):
         rospy.loginfo("Starting Raspberry Pi node...")
 
         self.cmd_vel_pub = rospy.Publisher("/cmd_vel_AV", Twist, queue_size = 1)
-        self.joy_sub = rospy.Subscriber("/joy", Joy, self.joy_cb)
+        self.joy_sub = rospy.Subscriber("/joy", Joy, self.joy_cb)           #future update, add teleop_twist_joy on roslaunch instead of joy_node pack
 
     def joy_cb(self, joy_msg, intuitive = False):
         vel = Twist()
