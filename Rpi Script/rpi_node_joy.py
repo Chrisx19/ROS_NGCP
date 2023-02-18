@@ -7,24 +7,28 @@ class Rpi(object):
     def __init__(self):
         rospy.loginfo("Starting Raspberry Pi node...")
 
-        self.cmd_vel_pub = rospy.Publisher("/cmd_vel_ugv", Twist, queue_size = 10)
-        self.joy_sub = rospy.Subscriber("/joy", Joy, self.joy_cb, queue_size=10)
+        self.cmd_vel_pub = rospy.Publisher("/cmd_vel_AV", Twist, queue_size = 1)
+        self.joy_sub = rospy.Subscriber("/joy", Joy, self.joy_cb)
 
-    def joy_cb(self, joy_msg):
-        self.vel = Twist()
+    def joy_cb(self, joy_msg, intuitive = False):
+        vel = Twist()
 
         joy_val_drive = joy_msg.axes[1]
         joy_val_turn = joy_msg.axes[3]
 
-        duty = joy_val_drive * 100
-        servo = joy_val_turn * 50
+        duty = int(joy_val_drive * 30)
+        servo = int(joy_val_turn * 2)
 
-        self.vel.linear.x = duty
-        self.vel.angular.z = servo
+        rbButton = joy_msg.buttons[5]
 
-        self.cmd_vel_pub.publish(self.vel)
+        vel.linear.x = duty
+        vel.angular.z = servo
+
+        if (rbButton > 0):
+             self.cmd_vel_pub.publish(vel)
+
 
 if __name__ == "__main__":
     rospy.init_node("Rpi_node", anonymous = False)
-    rpi_n = Rpi()
+    rpi_node = Rpi()
     rospy.spin()
