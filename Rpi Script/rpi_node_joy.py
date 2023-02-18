@@ -24,7 +24,7 @@ class Rpi(object):
         vel.linear.x = duty
         vel.angular.z = servo
 
-        if (rbButton > 0):
+        if (rbButton > 0):              #will only publish if rbbutton is enabled
              self.cmd_vel_pub.publish(vel)
 
 
