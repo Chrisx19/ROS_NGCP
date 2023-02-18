@@ -15,11 +15,10 @@ class Rpi(object):
 
         joy_val_drive = joy_msg.axes[1]
         joy_val_turn = joy_msg.axes[3]
+        rbButton = joy_msg.buttons[5]
 
         duty = int(joy_val_drive * 30)
         servo = int(joy_val_turn * 2)
-
-        rbButton = joy_msg.buttons[5]
 
         vel.linear.x = duty
         vel.angular.z = servo
