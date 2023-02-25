@@ -1,3 +1,3 @@
 Northrop Grumman UGV
 
-![ugv](ugv.jpg)
+![ugv](ugv.JPG)
