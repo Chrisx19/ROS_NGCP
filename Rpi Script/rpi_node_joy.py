@@ -1,33 +1,31 @@
 #!/usr/bin/env python3
 import rospy
+from rpi_node.msg import CmdVelUgv
 from sensor_msgs.msg import Joy
-from geometry_msgs.msg import Twist
 
-class Rpi(object):
+class Joystick(object):
     def __init__(self):
-        rospy.loginfo("Starting Raspberry Pi node...")
+        rospy.loginfo("Starting joystick for turtle")
 
-        self.cmd_vel_pub = rospy.Publisher("/cmd_vel_AV", Twist, queue_size = 1)
-        self.joy_sub = rospy.Subscriber("/joy", Joy, self.joy_cb)           #future update, add teleop_twist_joy on roslaunch instead of joy_node pack
+        self.cmd_pub = rospy.Publisher("/rpi_ugv_info", CmdVelUgv, queue_size=10)
+        self.joy_sub = rospy.Subscriber("/joy", Joy, self.joy_cb, queue_size=10)
 
-    def joy_cb(self, joy_msg, intuitive = False):
-        vel = Twist()
+    def joy_cb(self, joy_msg):
+        vel = CmdVelUgv()
 
-        joy_val_drive = joy_msg.axes[1]
-        joy_val_turn = joy_msg.axes[3]
-        rbButton = joy_msg.buttons[5]
+        pwm = 2 * joy_msg.axes[1]
+        servo = 3 * joy_msg.axes[3]
+        en_button = joy_msg.buttons[5]
 
-        duty = int(joy_val_drive * 30)
-        servo = int(joy_val_turn * 2)
+        vel.Linear_x_PWM = int(pwm)
+        vel.Angular_z_Servo = int(servo)
 
-        vel.linear.x = duty
-        vel.angular.z = servo
+        if(en_button>0): 
+            self.cmd_pub.publish(vel)
 
-        if (rbButton > 0):              #will only publish if rbbutton is enabled
-             self.cmd_vel_pub.publish(vel)
-
+    # def MTi_cb(self, mti):
 
 if __name__ == "__main__":
-    rospy.init_node("Rpi_node", anonymous = False)
-    rpi_node = Rpi()
+    rospy.init_node("ugv_joy", anonymous=False)
+    joy = Joystick()
     rospy.spin()
